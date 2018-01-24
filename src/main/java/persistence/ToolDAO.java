@@ -51,7 +51,37 @@ public class ToolDAO implements BaseDAO{
         }
 
         try {
-            String sql = "";
+            String sql = "select BUSINESSRULES.ID as ID,\n" +
+                    "    BUSINESSRULES.RULENAME as RULENAME,\n" +
+                    "    BUSINESSRULES.TIMING as TIMING,\n" +
+                    "    BUSINESSRULES.EXECUTED as EXECUTED,\n" +
+                    "    BUSINESSRULES.SQL_ID as SQL_ID,\n" +
+                    "    BUSINESSRULES.MASTER_ID as MASTER_ID,\n" +
+                    "    BUSINESSRULES.RULETYPE as RULETYPE,\n" +
+                    "    BUSINESSRULES.DB_ID as DB_ID,\n" +
+                    "    TEMPLATES.TYPE as TYPE,\n" +
+                    "    TEMPLATES.CODE as CODE,\n" +
+                    "    TARGETVALUES.V_VALUE as V_VALUE,\n" +
+                    "    TARGETVALUES.POSITION as POSITION,\n" +
+                    "    TARGETCOLUMN.V_TABLE as V_TABLE,\n" +
+                    "    TARGETCOLUMN.V_COLUMN as V_COLUMN,\n" +
+                    "    TARGETCOLUMN.POSITION as POSITION_COL,\n" +
+                    "    TARGETDATABASE.DBNAME as DBNAME,\n" +
+                    "    TARGETDATABASE.USERNAME as USERNAME,\n" +
+                    "    TARGETDATABASE.PASSWORD as PASSWORD,\n" +
+                    "    TARGETDATABASE.URL as URL,\n" +
+                    "    TARGETDATABASE.TYPE as DBTYPE \n" +
+                    " from TARGETDATABASE TARGETDATABASE,\n" +
+                    "    TARGETCOLUMN TARGETCOLUMN,\n" +
+                    "    TARGETVALUES TARGETVALUES,\n" +
+                    "    RULETYPES RULETYPES,\n" +
+                    "    TEMPLATES TEMPLATES,\n" +
+                    "    BUSINESSRULES BUSINESSRULES \n" +
+                    " where BUSINESSRULES.RULETYPE=RULETYPES.RULETYPE\n" +
+                    "    and TEMPLATES.RULETYPE=RULETYPES.RULETYPE\n" +
+                    "    and TARGETVALUES.ID=BUSINESSRULES.ID\n" +
+                    "    and TARGETCOLUMN.ID=BUSINESSRULES.ID\n" +
+                    "    and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID and BUSINESSRULES.ID = ?";
             PreparedStatement pr = connection.prepareStatement(sql);
             pr.setInt(1, id);
             ResultSet rs = pr.executeQuery();

@@ -22,7 +22,7 @@ public class TargetDAO implements BaseDAO{
         this.password = password;
         this.url = url;
         this.dbtype = dbtype;
-        this.connection = this.openConnection(url, username, password);
+        //this.connection = this.openConnection(url, username, password);
     }
 
     public List<String> getTables() {
