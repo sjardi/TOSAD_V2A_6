@@ -1,4 +1,7 @@
-package persistence;
+package services;
+
+import persistence.TargetDAO;
+import persistence.ToolDAO;
 
 import java.sql.ResultSet;
 import java.util.HashMap;

@@ -1,12 +1,10 @@
 package services;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import persistence.DAOService;
 
 import javax.ws.rs.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Path("/")

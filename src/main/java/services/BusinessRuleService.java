@@ -1,8 +1,6 @@
 package services;
 
 import model.BusinessRule;
-import persistence.DAOService;
-import persistence.ToolDAO;
 
 import java.sql.ResultSet;
 
