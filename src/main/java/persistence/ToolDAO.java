@@ -51,37 +51,46 @@ public class ToolDAO implements BaseDAO{
         }
 
         try {
-            String sql = "select BUSINESSRULES.ID as ID,\n" +
-                    "    BUSINESSRULES.RULENAME as RULENAME,\n" +
-                    "    BUSINESSRULES.TIMING as TIMING,\n" +
+            String sql = "select BUSINESSRULES.RULENAME as RULENAME,\n" +
                     "    BUSINESSRULES.EXECUTED as EXECUTED,\n" +
-                    "    BUSINESSRULES.SQL_ID as SQL_ID,\n" +
-                    "    BUSINESSRULES.MASTER_ID as MASTER_ID,\n" +
                     "    BUSINESSRULES.RULETYPE as RULETYPE,\n" +
-                    "    BUSINESSRULES.DB_ID as DB_ID,\n" +
-                    "    TEMPLATES.TYPE as TYPE,\n" +
-                    "    TEMPLATES.CODE as CODE,\n" +
                     "    TARGETVALUES.V_VALUE as V_VALUE,\n" +
-                    "    TARGETVALUES.POSITION as POSITION,\n" +
-                    "    TARGETCOLUMN.V_TABLE as V_TABLE,\n" +
-                    "    TARGETCOLUMN.V_COLUMN as V_COLUMN,\n" +
-                    "    TARGETCOLUMN.POSITION as POSITION_COL,\n" +
+                    "    TARGETVALUES.POSITION as V_POSITION,\n" +
+                    "    TARGETCOLUMN.V_TABLE as T_TABLE,\n" +
+                    "    TARGETCOLUMN.V_COLUMN as T_COLUMN,\n" +
+                    "    TARGETCOLUMN.POSITION as T_POSITION,\n" +
+                    "    TEMPLATES.CODE as MAINCODE,\n" +
+                    "    MASTERTEMPLATE.START_CODE as START_CODE,\n" +
+                    "    MASTERTEMPLATE.END_CODE as END_CODE,\n" +
+                    "    BUSINESSRULES.ID as ID,\n" +
                     "    TARGETDATABASE.DBNAME as DBNAME,\n" +
                     "    TARGETDATABASE.USERNAME as USERNAME,\n" +
                     "    TARGETDATABASE.PASSWORD as PASSWORD,\n" +
                     "    TARGETDATABASE.URL as URL,\n" +
-                    "    TARGETDATABASE.TYPE as DBTYPE \n" +
-                    " from TARGETDATABASE TARGETDATABASE,\n" +
-                    "    TARGETCOLUMN TARGETCOLUMN,\n" +
-                    "    TARGETVALUES TARGETVALUES,\n" +
-                    "    RULETYPES RULETYPES,\n" +
+                    "    TARGETDATABASE.TYPE as DBTYPE,\n" +
+                    "    MASTERTEMPLATE.TIMING as TIMING,\n" +
+                    "    MASTERTEMPLATE.TRIGGEREVENT as TRIGGEREVENT,\n" +
+                    "    TARGETOPERATOR.OPERATOR as OPERATOR\n" +
+                    " from TIMING TIMING,\n" +
+                    "    TRIGGEREVENT TRIGGEREVENT,\n" +
+                    "    MASTERTEMPLATE MASTERTEMPLATE,\n" +
                     "    TEMPLATES TEMPLATES,\n" +
-                    "    BUSINESSRULES BUSINESSRULES \n" +
+                    "    TARGETDATABASE TARGETDATABASE,\n" +
+                    "    TARGETCOLUMN TARGETCOLUMN,\n" +
+                    "    RULETYPES RULETYPES,\n" +
+                    "    TARGETVALUES TARGETVALUES,\n" +
+                    "    BUSINESSRULES BUSINESSRULES,\n" +
+                    "    TARGETOPERATOR TARGETOPERATOR\n" +
                     " where BUSINESSRULES.RULETYPE=RULETYPES.RULETYPE\n" +
-                    "    and TEMPLATES.RULETYPE=RULETYPES.RULETYPE\n" +
-                    "    and TARGETVALUES.ID=BUSINESSRULES.ID\n" +
                     "    and TARGETCOLUMN.ID=BUSINESSRULES.ID\n" +
-                    "    and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID and BUSINESSRULES.ID = ?";
+                    "    and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID\n" +
+                    "    and TARGETVALUES.ID=BUSINESSRULES.ID\n" +
+                    "    and TEMPLATES.RULETYPE=RULETYPES.RULETYPE\n" +
+                    "    and TIMING.TIMING=MASTERTEMPLATE.TIMING\n" +
+                    "    and TRIGGEREVENT.TRIGGEREVENT=MASTERTEMPLATE.TRIGGEREVENT\n" +
+                    "    and BUSINESSRULES.MASTER_ID=MASTERTEMPLATE.MASTER_ID\n" +
+                    "    and TARGETOPERATOR.ID = BUSINESSRULES.ID\n" +
+                    "    and BUSINESSRULES.ID = ?";
             PreparedStatement pr = connection.prepareStatement(sql);
             pr.setInt(1, id);
             ResultSet rs = pr.executeQuery();

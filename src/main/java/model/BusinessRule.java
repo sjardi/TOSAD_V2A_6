@@ -10,17 +10,15 @@ import java.util.List;
 public class BusinessRule {
     private Integer id;
     private String name;
-    private String timing;
     private BusinessRuleType ruleType;
     private List<Value> values;
     private List<Table> tables;
     private boolean executed;
     private TargetDAO targetdb;
 
-    public BusinessRule(Integer id, String name, String timing, BusinessRuleType ruleType, List<Value> values, List<Table> tables, boolean executed, TargetDAO targetdb) {
+    public BusinessRule(Integer id, String name, BusinessRuleType ruleType, List<Value> values, List<Table> tables, boolean executed, TargetDAO targetdb) {
         this.id = id;
         this.name = name;
-        this.timing = timing;
         this.ruleType = ruleType;
         this.values = values;
         this.tables = tables;
@@ -34,10 +32,6 @@ public class BusinessRule {
 
     public String getName() {
         return name;
-    }
-
-    public String getTiming() {
-        return timing;
     }
 
     public BusinessRuleType getRuleType() {

@@ -55,57 +55,11 @@ public class RestService {
     @Path("/generate")
     @Produces("application/json")
     public String generate(@QueryParam("id") Integer id) {
-        ResultSet rs = BusinessRuleService.getInstance().getDaoservice().getBusinessRule(id);
-
-        BusinessRule br;
-        String ruleName = "";
-        String timing = "";
-        String ruleType = "";
-        String code = "";
-
-
-        ArrayList<Value> values = new ArrayList<Value>();
-        ArrayList<String> tables = new ArrayList<String>();
-        ArrayList<String> columns = new ArrayList<String>();
-
-        String dbname = "";
-        String username = "";
-        String password = "";
-        String dbtype = "";
-        String url = "";
-        try {
-            while(rs.next()){
-
-                ruleName = rs.getString("RULENAME");
-                timing = rs.getString("TIMING");
-                ruleType = rs.getString("RULETYPE");
-                code = rs.getString("CODE");
-
-                values.add(new Value(rs.getInt("POSITION"), rs.getString("V_VALUE")));
-                columns.add(rs.getString("V_COLUMN"));
-                tables.add(rs.getString("V_TABLE"));
-
-                dbname = rs.getString("DBNAME");
-                username = rs.getString("USERNAME");
-                password = rs.getString("PASSWORD");
-                url = rs.getString("URL");
-                dbtype = rs.getString("DBTYPE");
-
-            }
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        ArrayList<Table> tb = new ArrayList<Table>();
-        for(int i = 0; i < tables.size(); i++)
-            tb.add(new Table(tables.get(i), columns, i));
-
-        br = new BusinessRule(id, ruleName, timing, new BusinessRuleType(ruleType, new Category(""), new Template(code), null), values, tb, false, new TargetDAO(dbname, username, password, url, dbtype));
-        TemplateParser tp = new TemplateParser();
-        String sql = tp.parse(br);
+        String result = BusinessRuleService.getInstance().generate(id);
+        System.out.print(result);
 
         JSONObject jo = new JSONObject();
-        jo.append("code", sql);
+        jo.append("code", result);
         return jo.toString();
     }
 

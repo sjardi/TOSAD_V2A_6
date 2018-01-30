@@ -1,8 +1,11 @@
 package services;
 
-import model.BusinessRule;
+import model.*;
+import persistence.TargetDAO;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by Yorick on 23/01/2018.
@@ -30,10 +33,70 @@ public class BusinessRuleService {
     }
 
     public String generate(Integer id){
-        return "";
+        ResultSet rs = this.getDaoservice().getBusinessRule(id);
+        String sql = this.templateParser.parse(this.ResultSetToBusinessRule(rs));
+
+        return sql;
     }
 
-    private BusinessRule resultSetToBusinessRule(ResultSet rs){
-        return null;
+    private BusinessRule ResultSetToBusinessRule(ResultSet rs){
+        BusinessRule br;
+        Integer id = 0;
+        String ruleName = "";
+        String timing = "";
+        String ruleType = "";
+        String maincode = "";
+        String begincode = "";
+        String endcode = "";
+        String triggerevent = "";
+
+        ArrayList<Value> values = new ArrayList<Value>();
+        ArrayList<Table> tables = new ArrayList<Table>();
+        ArrayList<String> columns = new ArrayList<String>();
+        ArrayList<Operator> operators = new ArrayList<Operator>();
+
+        String dbname = "";
+        String username = "";
+        String password = "";
+        String dbtype = "";
+        String url = "";
+
+        try {
+            while(rs.next()){
+
+                id = rs.getInt("ID");
+                ruleName = rs.getString("RULENAME");
+                timing = rs.getString("TIMING");
+                ruleType = rs.getString("RULETYPE");
+                begincode = rs.getString("START_CODE");
+                maincode = rs.getString("MAINCODE");
+                endcode = rs.getString("END_CODE");
+                triggerevent = rs.getString("TRIGGEREVENT");
+
+
+                values.add(new Value(rs.getInt("V_POSITION"), rs.getString("V_VALUE")));
+                columns.add(rs.getString("T_COLUMN"));
+                tables.add(new Table(rs.getString("T_TABLE"), null, rs.getInt("T_POSITION")));
+                operators.add(new Operator(rs.getString("OPERATOR")));
+
+                dbname = rs.getString("DBNAME");
+                username = rs.getString("USERNAME");
+                password = rs.getString("PASSWORD");
+                url = rs.getString("URL");
+                dbtype = rs.getString("DBTYPE");
+
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        ArrayList<Table> tb = new ArrayList<Table>();
+        for(int i = 0; i < tables.size(); i++)
+            tb.add(new Table(tables.get(i).getName(), columns, tables.get(i).getPosition()));
+
+        br = new BusinessRule(id, ruleName, new BusinessRuleType(ruleType, new Category(""), new Template(maincode, begincode, endcode, timing, triggerevent), operators), values, tb, false, new TargetDAO(dbname, username, password, url, dbtype));
+
+        return br;
     }
 }
