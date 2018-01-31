@@ -154,4 +154,18 @@ public class ToolDAO implements BaseDAO{
             e.printStackTrace();
         }
     }
+
+    public void updateBusinessRule(int id, boolean executed) {
+        try {
+            if(connection.isClosed())
+                openConnection(this.url, this.username, this.password);
+
+            PreparedStatement ps = connection.prepareStatement("UPDATE BUSINESSRULES SET EXECUTED = ? WHERE ID = ?");
+            ps.setBoolean(1, executed);
+            ps.setInt(2, id);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

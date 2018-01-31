@@ -47,7 +47,10 @@ public class BusinessRuleService {
         String sql = this.templateParser.parse(br);
 
         daoservice.executeBusinessRule(sql, br.getTargetdb());
-        return daoservice.triggerExists(br.getRuleType().getTypeName() + "_" + br.getId());
+        boolean result = daoservice.triggerExists(br.getRuleType().getTypeName() + "_" + br.getId());
+        if(result)
+            daoservice.updateBusinessRule(id, true);
+        return result;
     };
 
     private BusinessRule ResultSetToBusinessRule(ResultSet rs){

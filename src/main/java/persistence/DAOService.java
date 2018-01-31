@@ -43,6 +43,10 @@ public class DAOService {
         return this.targetdb.triggerExists(triggername);
     }
 
+    public void updateBusinessRule(int id, boolean executed){
+        this.tooldb.updateBusinessRule(id, executed);
+    }
+
     public List<String> getTargetColumns(String table){
         return targetdb.getColumns(table);
     }
