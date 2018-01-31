@@ -1,6 +1,7 @@
 package persistence;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +24,20 @@ public class TargetDAO implements BaseDAO{
     }
 
     public List<String> getTables() {
-        return null;
+        ArrayList<String> result = new ArrayList<String>();
+        try {
+            connection = openConnection(url, username, password);
+            Statement stmt = connection.createStatement();
+            stmt.executeQuery("SELECT table_name\n" +
+                        "  FROM user_tables");
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {
+                result.add(rs.getString("TABLE_NAME"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public void executeBusinessRule(String sql){
@@ -37,7 +51,20 @@ public class TargetDAO implements BaseDAO{
     }
 
     public List<String> getColumns(String table){
-        return null;
+        ArrayList<String> result = new ArrayList<String>();
+        try {
+            connection = openConnection(url, username, password);
+            Statement stmt = connection.createStatement();
+            stmt.executeQuery("SELECT column_name FROM USER_TAB_COLUMNS\n" +
+                    "WHERE table_name = '"+table+"'");
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {
+                result.add(rs.getString("COLUMN_NAME"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public Connection openConnection(String url, String username, String password) {

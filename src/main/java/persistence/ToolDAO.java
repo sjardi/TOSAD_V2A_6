@@ -42,6 +42,33 @@ public class ToolDAO implements BaseDAO{
         return hm;
     }
 
+    public HashMap<String, String> getTargetDatabase(Integer id){
+        // open connection if connection is closed
+        try {
+            if(connection.isClosed())
+                openConnection(this.url, this.username, this.password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        HashMap<String, String> hm = new HashMap<String, String>();
+        try {
+            String sql = "select DBNAME, USERNAME, PASSWORD, URL, TYPE from TARGETDATABASE WHERE DB_ID = ?";
+            PreparedStatement pr = connection.prepareStatement(sql);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            while(rs.next()){
+                hm.put("DBNAME", rs.getString("DBNAME"));
+                hm.put("USERNAME", rs.getString("USERNAME"));
+                hm.put("PASSWORD", rs.getString("PASSWORD"));
+                hm.put("URL", rs.getString("URL"));
+                hm.put("TYPE", rs.getString("TYPE"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return hm;
+    }
+
     public ResultSet getBusinessRule(Integer id){
         // open connection if connection is closed
         try {
@@ -107,6 +134,8 @@ public class ToolDAO implements BaseDAO{
         }
         return null;
     }
+
+
 
 
     public Connection openConnection() {

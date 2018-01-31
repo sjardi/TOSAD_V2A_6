@@ -3,6 +3,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.ws.rs.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Path("/")
@@ -24,13 +25,41 @@ public class RestService {
     }
 
     @GET
+    @Path("/targettables")
+    @Produces("application/json")
+    public String targettables(@QueryParam("id") Integer id) {
+        ArrayList<String> tables = (ArrayList<String>) BusinessRuleService.getInstance().getDaoservice().getTargetTables(id);
+
+        JSONObject jo = new JSONObject();
+        for(String s: tables){
+            jo.append("table_names", s);
+        }
+        return jo.toString();
+    }
+
+    @GET
+    @Path("/tablecolumns")
+    @Produces("application/json")
+    public String tablecolumns(@QueryParam("dbid") Integer dbid, @QueryParam("tablename") String tablename) {
+        ArrayList<String> cols = (ArrayList<String>) BusinessRuleService.getInstance().getDaoservice().getTargetColumns(dbid, tablename);
+
+        JSONObject jo = new JSONObject();
+        for(String s: cols){
+            jo.append("columns", s);
+        }
+        return jo.toString();
+    }
+
+    @GET
     @Path("/generate")
     @Produces("application/json")
     public String generate(@QueryParam("id") Integer id) {
         String result = BusinessRuleService.getInstance().generate(id);
 
+        if(result == "")
+            result = "Businessrule not defined properly.";
         JSONObject jo = new JSONObject();
-        jo.append("code", result);
+        jo.append("result", result);
         return jo.toString();
     }
 

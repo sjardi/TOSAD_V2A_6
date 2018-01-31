@@ -30,7 +30,9 @@ public class DAOService {
         return tooldb.getBusinessRule(id);
     }
 
-    public List<String> getTargetTables(){
+    public List<String> getTargetTables(Integer id){
+        HashMap<String, String> hm = tooldb.getTargetDatabase(id);
+        setTargetdb(hm.get("DBNAME"), hm.get("USERNAME"), hm.get("PASSWORD"), hm.get("URL"), hm.get("TYPE"));
         return targetdb.getTables();
     }
 
@@ -47,7 +49,9 @@ public class DAOService {
         this.tooldb.updateBusinessRule(id, executed);
     }
 
-    public List<String> getTargetColumns(String table){
+    public List<String> getTargetColumns(Integer dbid, String table){
+        HashMap<String, String> hm = tooldb.getTargetDatabase(dbid);
+        setTargetdb(hm.get("DBNAME"), hm.get("USERNAME"), hm.get("PASSWORD"), hm.get("URL"), hm.get("TYPE"));
         return targetdb.getColumns(table);
     }
 
