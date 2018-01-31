@@ -64,7 +64,7 @@ public class TemplateParser {
 
         String operator = br.getRuleType().getOperators().get(0).getOperator();
         mainCode = mainCode.replaceAll("#OPERATOR(.*?)#", operator);
-        //mainCode = mainCode.replaceAll("#STATEMENT(.*?)#", br.getRuleType().);
+        mainCode = mainCode.replaceAll("#STATEMENT(.*?)#", br.getSql());
 
         // Some rules require you to add multiple tables value's etc.
         while(mainCode.contains("#TABLE#") || mainCode.contains("#COLUMN#") || mainCode.contains("#VALUE#")) {

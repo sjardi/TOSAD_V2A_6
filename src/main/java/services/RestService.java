@@ -29,8 +29,12 @@ public class RestService {
     @Produces("application/json")
     public String targettables(@QueryParam("id") Integer id) {
         ArrayList<String> tables = (ArrayList<String>) BusinessRuleService.getInstance().getDaoservice().getTargetTables(id);
-
         JSONObject jo = new JSONObject();
+
+        if(tables == null || tables.size() == 0){
+            return jo.append("message","Invalid target id / invalid database details.").toString();
+        }
+
         for(String s: tables){
             jo.append("table_names", s);
         }

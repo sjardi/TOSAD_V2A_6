@@ -15,8 +15,9 @@ public class BusinessRule {
     private List<Table> tables;
     private boolean executed;
     private TargetDAO targetdb;
+    private String sql;
 
-    public BusinessRule(Integer id, String name, BusinessRuleType ruleType, List<Value> values, List<Table> tables, boolean executed, TargetDAO targetdb) {
+    public BusinessRule(Integer id, String name, BusinessRuleType ruleType, List<Value> values, List<Table> tables, boolean executed, TargetDAO targetdb, String sql) {
         this.id = id;
         this.name = name;
         this.ruleType = ruleType;
@@ -24,6 +25,7 @@ public class BusinessRule {
         this.tables = tables;
         this.executed = executed;
         this.targetdb = targetdb;
+        this.sql = sql;
     }
 
     public Integer getId() {
@@ -52,5 +54,9 @@ public class BusinessRule {
 
     public TargetDAO getTargetdb() {
         return targetdb;
+    }
+
+    public String getSql() {
+        return sql;
     }
 }

@@ -74,6 +74,7 @@ public class BusinessRuleService {
         String password = "";
         String dbtype = "";
         String url = "";
+        String sqlcode = "";
 
         try {
             while(rs.next()){
@@ -98,6 +99,7 @@ public class BusinessRuleService {
                 password = rs.getString("PASSWORD");
                 url = rs.getString("URL");
                 dbtype = rs.getString("DBTYPE");
+                sqlcode = rs.getString("SQLCODE");
 
             }
         } catch (SQLException e)
@@ -109,7 +111,7 @@ public class BusinessRuleService {
         for(int i = 0; i < tables.size(); i++)
             tb.add(new Table(tables.get(i).getName(), columns, tables.get(i).getPosition()));
 
-        br = new BusinessRule(id, ruleName, new BusinessRuleType(ruleType, new Category(""), new Template(maincode, begincode, endcode, timing, triggerevent), operators), values, tb, false, new TargetDAO(dbname, username, password, url, dbtype));
+        br = new BusinessRule(id, ruleName, new BusinessRuleType(ruleType, new Category(""), new Template(maincode, begincode, endcode, timing, triggerevent), operators), values, tb, false, new TargetDAO(dbname, username, password, url, dbtype), sqlcode);
         return br;
     }
 }

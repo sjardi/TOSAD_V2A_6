@@ -23,8 +23,7 @@ public class ToolDAO implements BaseDAO{
         try {
             if(connection.isClosed())
                 openConnection(this.url, this.username, this.password);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
         }
         HashMap<Integer, String> hm = new HashMap<Integer, String>();
         try {
@@ -36,8 +35,8 @@ public class ToolDAO implements BaseDAO{
                 Integer id = rs.getInt("DB_ID");
                 hm.put(id, name);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
         return hm;
     }
@@ -63,8 +62,8 @@ public class ToolDAO implements BaseDAO{
                 hm.put("URL", rs.getString("URL"));
                 hm.put("TYPE", rs.getString("TYPE"));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
         return hm;
     }
@@ -98,7 +97,8 @@ public class ToolDAO implements BaseDAO{
                     "    TARGETDATABASE.TYPE as DBTYPE,\n" +
                     "    MASTERTEMPLATE.TIMING as TIMING,\n" +
                     "    MASTERTEMPLATE.TRIGGEREVENT as TRIGGEREVENT,\n" +
-                    "    TARGETOPERATOR.OPERATOR as OPERATOR\n" +
+                    "    TARGETOPERATOR.OPERATOR as OPERATOR,\n" +
+                    "    SQL.SQL_CODE as SQLCODE\n" +
                     " from TIMING TIMING,\n" +
                     "    TRIGGEREVENT TRIGGEREVENT,\n" +
                     "    MASTERTEMPLATE MASTERTEMPLATE,\n" +
@@ -108,7 +108,8 @@ public class ToolDAO implements BaseDAO{
                     "    RULETYPES RULETYPES,\n" +
                     "    TARGETVALUES TARGETVALUES,\n" +
                     "    BUSINESSRULES BUSINESSRULES,\n" +
-                    "    TARGETOPERATOR TARGETOPERATOR\n" +
+                    "    TARGETOPERATOR TARGETOPERATOR,\n" +
+                    "    SQL SQL\n" +
                     " where BUSINESSRULES.RULETYPE=RULETYPES.RULETYPE\n" +
                     "    and TARGETCOLUMN.ID=BUSINESSRULES.ID\n" +
                     "    and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID\n" +
@@ -118,19 +119,20 @@ public class ToolDAO implements BaseDAO{
                     "    and TRIGGEREVENT.TRIGGEREVENT=MASTERTEMPLATE.TRIGGEREVENT\n" +
                     "    and BUSINESSRULES.MASTER_ID=MASTERTEMPLATE.MASTER_ID\n" +
                     "    and TARGETOPERATOR.ID = BUSINESSRULES.ID\n" +
+                    "    and SQL.SQL_ID = BUSINESSRULES.SQL_ID\n" +
                     "    and BUSINESSRULES.ID = ?";
             PreparedStatement pr = connection.prepareStatement(sql);
             pr.setInt(1, id);
             ResultSet rs = pr.executeQuery();
             return rs;
             }
-         catch(SQLException e) {
-            e.printStackTrace();
+         catch(Exception e) {
+
         }
         try {
             connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
         return null;
     }

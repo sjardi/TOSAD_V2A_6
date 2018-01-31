@@ -34,8 +34,8 @@ public class TargetDAO implements BaseDAO{
             while (rs.next()) {
                 result.add(rs.getString("TABLE_NAME"));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return result;
         }
         return result;
     }
@@ -61,8 +61,8 @@ public class TargetDAO implements BaseDAO{
             while (rs.next()) {
                 result.add(rs.getString("COLUMN_NAME"));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
         return result;
     }
@@ -77,9 +77,9 @@ public class TargetDAO implements BaseDAO{
         connection = null;
         try {
             connection = DriverManager.getConnection(url, username.toLowerCase(), password.toLowerCase());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Connection Failed!");
-            e.printStackTrace();
+            return null;
         }
         return connection;
     }
