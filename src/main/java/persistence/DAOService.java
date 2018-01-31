@@ -1,4 +1,4 @@
-package services;
+package persistence;
 
 import persistence.TargetDAO;
 import persistence.ToolDAO;
@@ -34,8 +34,13 @@ public class DAOService {
         return targetdb.getTables();
     }
 
-    public void executeBusinessRule(String sql){
+    public void executeBusinessRule(String sql, TargetDAO targetdb){
+        this.targetdb = targetdb;
         targetdb.executeBusinessRule(sql);
+    }
+
+    public boolean triggerExists(String triggername){
+        return this.targetdb.triggerExists(triggername);
     }
 
     public List<String> getTargetColumns(String table){

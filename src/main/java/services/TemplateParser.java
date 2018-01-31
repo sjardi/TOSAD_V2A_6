@@ -1,14 +1,11 @@
 package services;
 
 import model.BusinessRule;
-import model.Operator;
 import model.Table;
 import model.Value;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 
 /**
  * Created by Yorick on 23/01/2018.
@@ -23,7 +20,6 @@ public class TemplateParser {
         String mainCode = br.getRuleType().getTemplate().getCode();
         String endCode = br.getRuleType().getTemplate().getEndCode();
         String name = br.getRuleType().getTypeName() + "_" + br.getId();
-        System.out.print(name);
 
         // sort values by position
         ArrayList<Table> tables = (ArrayList<Table>) br.getTables();
@@ -38,10 +34,11 @@ public class TemplateParser {
         beginCode = beginCode.replaceFirst("#TIMING(.*?)#", br.getRuleType().getTemplate().getTiming());
         beginCode = beginCode.replaceFirst("#EVENTS(.*?)#", br.getRuleType().getTemplate().getTriggerevent());
         String columns = "";
+
         for(Table t : tables){
 
             beginCode = beginCode.replaceFirst("#TABLE(.*?)#", t.getName());
-
+            mainCode = mainCode.replaceFirst("#TABLE(.*?)#", t.getName());
             for(String column : t.getColumns()){
                 beginCode = beginCode.replaceFirst("#COLUMN(.*?)#", column);
                 mainCode = mainCode.replaceFirst("#COLUMN(.*?)#", column);
@@ -68,16 +65,20 @@ public class TemplateParser {
         String operator = br.getRuleType().getOperators().get(0).getOperator();
         mainCode = mainCode.replaceAll("#OPERATOR(.*?)#", operator);
 
-
-        // Add error message
-        for(int i = 0; i < values.size(); i++)
-            mainCode = mainCode.replaceFirst("#VALUE(.*?)#", values.get(i).getValue());
-        for(Table t : tables){
-            for(String column : t.getColumns()){
-                mainCode = mainCode.replaceFirst("#COLUMN(.*?)#", column);
+        // Some rules require you to add multiple tables value's etc.
+        while(mainCode.contains("#TABLE#") || mainCode.contains("#COLUMN#") || mainCode.contains("#VALUE#")) {
+            for (int i = 0; i < values.size(); i++)
+                mainCode = mainCode.replaceFirst("#VALUE(.*?)#", values.get(i).getValue());
+            for (Table t : tables) {
+                mainCode = mainCode.replaceFirst("#TABLE(.*?)#", t.getName());
+                for (String column : t.getColumns()) {
+                    mainCode = mainCode.replaceFirst("#COLUMN(.*?)#", column);
+                }
             }
         }
-
-        return (beginCode + " " + mainCode + " " + endCode).replaceAll("(\\r|\\n)", " ");
+        String result = (beginCode + " " + mainCode + " " + endCode);
+        result = result.replaceAll("--.*;*", " ");
+        result = result.replaceAll("(\\r|\\n)", " ").replaceAll("(\\t)", "");
+        return result;
     }
 }

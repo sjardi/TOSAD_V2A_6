@@ -1,5 +1,6 @@
 package persistence;
 
+import java.lang.annotation.Target;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +98,11 @@ public class ToolDAO implements BaseDAO{
             return rs;
             }
          catch(SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

@@ -1,8 +1,6 @@
 package persistence;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -22,7 +20,6 @@ public class TargetDAO implements BaseDAO{
         this.password = password;
         this.url = url;
         this.dbtype = dbtype;
-        //this.connection = this.openConnection(url, username, password);
     }
 
     public List<String> getTables() {
@@ -30,7 +27,13 @@ public class TargetDAO implements BaseDAO{
     }
 
     public void executeBusinessRule(String sql){
-
+        try {
+            connection = openConnection(url, username, password);
+            Statement stmt = connection.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<String> getColumns(String table){
@@ -46,12 +49,23 @@ public class TargetDAO implements BaseDAO{
         }
         connection = null;
         try {
-            connection = DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(url, username.toLowerCase(), password.toLowerCase());
         } catch (SQLException e) {
             System.out.println("Connection Failed!");
             e.printStackTrace();
         }
         return connection;
+    }
+
+    public boolean triggerExists(String triggername){
+        try {
+            connection = openConnection(url, username, password);
+            Statement stmt = connection.createStatement();
+            return stmt.execute("select count(*) from user_triggers where trigger_name = '"+triggername+"'");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public Connection getConnection() {
@@ -64,5 +78,25 @@ public class TargetDAO implements BaseDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getDbname() {
+        return dbname;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getDbtype() {
+        return dbtype;
     }
 }

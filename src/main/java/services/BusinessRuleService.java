@@ -1,11 +1,13 @@
 package services;
 
 import model.*;
+import persistence.DAOService;
 import persistence.TargetDAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Yorick on 23/01/2018.
@@ -38,6 +40,15 @@ public class BusinessRuleService {
 
         return sql;
     }
+
+    public boolean executeBusinessRule(int id){
+        ResultSet rs = this.getDaoservice().getBusinessRule(id);
+        BusinessRule br = this.ResultSetToBusinessRule(rs);
+        String sql = this.templateParser.parse(br);
+
+        daoservice.executeBusinessRule(sql, br.getTargetdb());
+        return daoservice.triggerExists(br.getRuleType().getTypeName() + "_" + br.getId());
+    };
 
     private BusinessRule ResultSetToBusinessRule(ResultSet rs){
         BusinessRule br;
@@ -96,7 +107,6 @@ public class BusinessRuleService {
             tb.add(new Table(tables.get(i).getName(), columns, tables.get(i).getPosition()));
 
         br = new BusinessRule(id, ruleName, new BusinessRuleType(ruleType, new Category(""), new Template(maincode, begincode, endcode, timing, triggerevent), operators), values, tb, false, new TargetDAO(dbname, username, password, url, dbtype));
-
         return br;
     }
 }
