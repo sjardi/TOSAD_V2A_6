@@ -119,7 +119,7 @@ public class ToolDAO implements BaseDAO{
                     "    and TRIGGEREVENT.TRIGGEREVENT=MASTERTEMPLATE.TRIGGEREVENT\n" +
                     "    and BUSINESSRULES.MASTER_ID=MASTERTEMPLATE.MASTER_ID\n" +
                     "    and TARGETOPERATOR.ID = BUSINESSRULES.ID\n" +
-                    "    and SQL.SQL_ID = BUSINESSRULES.SQL_ID\n" +
+                    "    and SQL.ID = BUSINESSRULES.ID\n" +
                     "    and BUSINESSRULES.ID = ?";
             PreparedStatement pr = connection.prepareStatement(sql);
             pr.setInt(1, id);

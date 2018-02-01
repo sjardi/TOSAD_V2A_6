@@ -45,8 +45,8 @@ public class TargetDAO implements BaseDAO{
             connection = openConnection(url, username, password);
             Statement stmt = connection.createStatement();
             stmt.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
     }
 
@@ -89,8 +89,8 @@ public class TargetDAO implements BaseDAO{
             connection = openConnection(url, username, password);
             Statement stmt = connection.createStatement();
             return stmt.execute("select count(*) from user_triggers where trigger_name = '"+triggername+"'");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
         return false;
     }
@@ -102,8 +102,8 @@ public class TargetDAO implements BaseDAO{
     public void closeConnection() {
         try {
             connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
     }
 

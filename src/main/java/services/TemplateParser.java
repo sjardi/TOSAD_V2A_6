@@ -50,9 +50,10 @@ public class TemplateParser {
         }
         beginCode = beginCode.replaceFirst("#COLUMNS(.*?)#", columns);
 
-        // fill the main code's values and the error msg values
+        // fill the main code's values
         String valuesList = "(";
         for(int i = 0; i < values.size(); i++) {
+
             mainCode = mainCode.replaceFirst("#VALUE(.*?)#", values.get(i).getValue());
             valuesList += "'" +values.get(i).getValue()+"',";
         }
