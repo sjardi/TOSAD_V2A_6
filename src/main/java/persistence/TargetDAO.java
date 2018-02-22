@@ -2,6 +2,7 @@ package persistence;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -50,16 +51,16 @@ public class TargetDAO implements BaseDAO{
         }
     }
 
-    public List<String> getColumns(String table){
-        ArrayList<String> result = new ArrayList<String>();
+    public HashMap<String, String> getColumns(String table){
+        HashMap<String, String> result = new HashMap<>();
         try {
             connection = openConnection(url, username, password);
             Statement stmt = connection.createStatement();
-            stmt.executeQuery("SELECT column_name FROM USER_TAB_COLUMNS\n" +
+            stmt.executeQuery("SELECT column_name, data_type FROM USER_TAB_COLUMNS\n" +
                     "WHERE table_name = '"+table+"'");
             ResultSet rs = stmt.getResultSet();
             while (rs.next()) {
-                result.add(rs.getString("COLUMN_NAME"));
+                result.put(rs.getString("COLUMN_NAME"), rs.getString("DATA_TYPE"));
             }
         } catch (Exception e) {
 

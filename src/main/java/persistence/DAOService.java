@@ -49,7 +49,7 @@ public class DAOService {
         this.tooldb.updateBusinessRule(id, executed);
     }
 
-    public List<String> getTargetColumns(Integer dbid, String table){
+    public HashMap<String, String> getTargetColumns(Integer dbid, String table){
         HashMap<String, String> hm = tooldb.getTargetDatabase(dbid);
         setTargetdb(hm.get("DBNAME"), hm.get("USERNAME"), hm.get("PASSWORD"), hm.get("URL"), hm.get("TYPE"));
         return targetdb.getColumns(table);

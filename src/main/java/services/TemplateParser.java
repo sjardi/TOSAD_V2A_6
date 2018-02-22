@@ -36,7 +36,6 @@ public class TemplateParser {
         String columns = "";
 
         for(Table t : tables){
-
             beginCode = beginCode.replaceFirst("#TABLE(.*?)#", t.getName());
             mainCode = mainCode.replaceFirst("#TABLE(.*?)#", t.getName());
             for(String column : t.getColumns()){

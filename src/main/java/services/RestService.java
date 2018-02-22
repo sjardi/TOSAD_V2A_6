@@ -45,13 +45,16 @@ public class RestService {
     @Path("/tablecolumns")
     @Produces("application/json")
     public String tablecolumns(@QueryParam("dbid") Integer dbid, @QueryParam("tablename") String tablename) {
-        ArrayList<String> cols = (ArrayList<String>) BusinessRuleService.getInstance().getDaoservice().getTargetColumns(dbid, tablename);
+        HashMap<String, String> cols = BusinessRuleService.getInstance().getDaoservice().getTargetColumns(dbid, tablename);
 
-        JSONObject jo = new JSONObject();
-        for(String s: cols){
-            jo.append("columns", s);
+        JSONObject result = new JSONObject();
+        for(String s : cols.keySet()){
+            JSONObject jo = new JSONObject();
+            jo.append("column", s);
+            jo.append("datatype", cols.get(s));
+            result.append("columns", jo);
         }
-        return jo.toString();
+        return result.toString();
     }
 
     @GET
@@ -70,7 +73,7 @@ public class RestService {
     @GET
     @Path("/execute")
     @Produces("application/json")
-    public String generate(@QueryParam("id") int id) {
+    public String execute(@QueryParam("id") int id) {
         Boolean result = BusinessRuleService.getInstance().executeBusinessRule(id);
         JSONObject jo = new JSONObject();
         jo.append("executed", result);

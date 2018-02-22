@@ -1,5 +1,6 @@
 package persistence;
 
+import javax.xml.transform.Result;
 import java.lang.annotation.Target;
 import java.sql.*;
 import java.util.ArrayList;
@@ -78,11 +79,25 @@ public class ToolDAO implements BaseDAO{
         }
 
         try {
-            String sql = "select BUSINESSRULES.RULENAME as RULENAME,\n" +
+            String sql = "SELECT * FROM RULETYPES WHERE RULETYPE = (SELECT RULETYPE FROM BUSINESSRULES WHERE ID = ?)";
+            PreparedStatement pr = connection.prepareStatement(sql);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            Integer maxValues = 0;
+            if(rs.next())
+                maxValues = rs.getInt("MAX_VALUES");
+
+            sql = "SELECT SQL_CODE FROM SQL WHERE ID = ?";
+            pr = connection.prepareStatement(sql);
+            pr.setInt(1, id);
+            rs = pr.executeQuery();
+            String sql_code = "";
+            if(rs.next())
+                sql_code = rs.getString("SQL_CODE");
+
+            sql = "select BUSINESSRULES.RULENAME as RULENAME,\n" +
                     "    BUSINESSRULES.EXECUTED as EXECUTED,\n" +
                     "    BUSINESSRULES.RULETYPE as RULETYPE,\n" +
-                    "    TARGETVALUES.V_VALUE as V_VALUE,\n" +
-                    "    TARGETVALUES.POSITION as V_POSITION,\n" +
                     "    TARGETCOLUMN.V_TABLE as T_TABLE,\n" +
                     "    TARGETCOLUMN.V_COLUMN as T_COLUMN,\n" +
                     "    TARGETCOLUMN.POSITION as T_POSITION,\n" +
@@ -106,28 +121,110 @@ public class ToolDAO implements BaseDAO{
                     "    TARGETDATABASE TARGETDATABASE,\n" +
                     "    TARGETCOLUMN TARGETCOLUMN,\n" +
                     "    RULETYPES RULETYPES,\n" +
-                    "    TARGETVALUES TARGETVALUES,\n" +
                     "    BUSINESSRULES BUSINESSRULES,\n" +
                     "    TARGETOPERATOR TARGETOPERATOR,\n" +
                     "    SQL SQL\n" +
                     " where BUSINESSRULES.RULETYPE=RULETYPES.RULETYPE\n" +
                     "    and TARGETCOLUMN.ID=BUSINESSRULES.ID\n" +
                     "    and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID\n" +
-                    "    and TARGETVALUES.ID=BUSINESSRULES.ID\n" +
                     "    and TEMPLATES.RULETYPE=RULETYPES.RULETYPE\n" +
                     "    and TIMING.TIMING=MASTERTEMPLATE.TIMING\n" +
                     "    and TRIGGEREVENT.TRIGGEREVENT=MASTERTEMPLATE.TRIGGEREVENT\n" +
                     "    and BUSINESSRULES.MASTER_ID=MASTERTEMPLATE.MASTER_ID\n" +
                     "    and TARGETOPERATOR.ID = BUSINESSRULES.ID\n" +
-                    "    and SQL.ID = BUSINESSRULES.ID\n" +
+                    "    and SQL.ID = BUSINESSRULES.SQL_ID\n" +
                     "    and BUSINESSRULES.ID = ?";
-            PreparedStatement pr = connection.prepareStatement(sql);
+
+            if(maxValues > 0){
+                sql = "select BUSINESSRULES.RULENAME as RULENAME,\n" +
+                        "    BUSINESSRULES.EXECUTED as EXECUTED,\n" +
+                        "    BUSINESSRULES.RULETYPE as RULETYPE,\n" +
+                        "    TARGETVALUES.V_VALUE as V_VALUE,\n" +
+                        "    TARGETVALUES.POSITION as V_POSITION,\n" +
+                        "    TARGETCOLUMN.V_TABLE as T_TABLE,\n" +
+                        "    TARGETCOLUMN.V_COLUMN as T_COLUMN,\n" +
+                        "    TARGETCOLUMN.POSITION as T_POSITION,\n" +
+                        "    TEMPLATES.CODE as MAINCODE,\n" +
+                        "    MASTERTEMPLATE.START_CODE as START_CODE,\n" +
+                        "    MASTERTEMPLATE.END_CODE as END_CODE,\n" +
+                        "    BUSINESSRULES.ID as ID,\n" +
+                        "    TARGETDATABASE.DBNAME as DBNAME,\n" +
+                        "    TARGETDATABASE.USERNAME as USERNAME,\n" +
+                        "    TARGETDATABASE.PASSWORD as PASSWORD,\n" +
+                        "    TARGETDATABASE.URL as URL,\n" +
+                        "    TARGETDATABASE.TYPE as DBTYPE,\n" +
+                        "    MASTERTEMPLATE.TIMING as TIMING,\n" +
+                        "    MASTERTEMPLATE.TRIGGEREVENT as TRIGGEREVENT,\n" +
+                        "    TARGETOPERATOR.OPERATOR as OPERATOR,\n" +
+                        "    SQL.SQL_CODE as SQLCODE\n" +
+                        " from TIMING TIMING,\n" +
+                        "    TRIGGEREVENT TRIGGEREVENT,\n" +
+                        "    MASTERTEMPLATE MASTERTEMPLATE,\n" +
+                        "    TEMPLATES TEMPLATES,\n" +
+                        "    TARGETDATABASE TARGETDATABASE,\n" +
+                        "    TARGETCOLUMN TARGETCOLUMN,\n" +
+                        "    RULETYPES RULETYPES,\n" +
+                        "    TARGETVALUES TARGETVALUES,\n" +
+                        "    BUSINESSRULES BUSINESSRULES,\n" +
+                        "    TARGETOPERATOR TARGETOPERATOR,\n" +
+                        "    SQL SQL\n" +
+                        " where BUSINESSRULES.RULETYPE=RULETYPES.RULETYPE\n" +
+                        "    and TARGETCOLUMN.ID=BUSINESSRULES.ID\n" +
+                        "    and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID\n" +
+                        "    and TARGETVALUES.ID=BUSINESSRULES.ID\n" +
+                        "    and TEMPLATES.RULETYPE=RULETYPES.RULETYPE\n" +
+                        "    and TIMING.TIMING=MASTERTEMPLATE.TIMING\n" +
+                        "    and TRIGGEREVENT.TRIGGEREVENT=MASTERTEMPLATE.TRIGGEREVENT\n" +
+                        "    and BUSINESSRULES.MASTER_ID=MASTERTEMPLATE.MASTER_ID\n" +
+                        "    and TARGETOPERATOR.ID = BUSINESSRULES.ID\n" +
+                        "    and SQL.ID = BUSINESSRULES.SQL_ID\n" +
+                        "    and BUSINESSRULES.ID = ?";
+            }else if(sql_code != "" && sql_code != "-"){
+                sql="select BUSINESSRULES.RULENAME as RULENAME,\n" +
+                        "BUSINESSRULES.EXECUTED as EXECUTED,\n" +
+                        "BUSINESSRULES.RULETYPE as RULETYPE,\n" +
+                        "TEMPLATES.CODE as MAINCODE,\n" +
+                        "TARGETCOLUMN.V_TABLE as T_TABLE,\n" +
+                        "TARGETCOLUMN.V_COLUMN as T_COLUMN,\n" +
+                        "TARGETCOLUMN.POSITION as T_POSITION,\n" +
+                        "MASTERTEMPLATE.START_CODE as START_CODE,\n" +
+                        "MASTERTEMPLATE.END_CODE as END_CODE,\n" +
+                        "BUSINESSRULES.ID as ID,\n" +
+                        "TARGETDATABASE.DBNAME as DBNAME,\n" +
+                        "TARGETDATABASE.USERNAME as USERNAME,\n" +
+                        "TARGETDATABASE.PASSWORD as PASSWORD,\n" +
+                        "TARGETDATABASE.URL as URL,\n" +
+                        "TARGETDATABASE.TYPE as DBTYPE,\n" +
+                        "MASTERTEMPLATE.TIMING as TIMING,\n" +
+                        "MASTERTEMPLATE.TRIGGEREVENT as TRIGGEREVENT,\n" +
+                        "SQL.SQL_CODE as SQLCODE\n" +
+                        "from TIMING TIMING,\n" +
+                        "TRIGGEREVENT TRIGGEREVENT,\n" +
+                        "MASTERTEMPLATE MASTERTEMPLATE,\n" +
+                        "TEMPLATES TEMPLATES,\n" +
+                        "TARGETDATABASE TARGETDATABASE,\n" +
+                        "RULETYPES RULETYPES,\n" +
+                        "BUSINESSRULES BUSINESSRULES,\n" +
+                        "TARGETCOLUMN TARGETCOLUMN,\n" +
+                        "SQL SQL\n" +
+                        "where BUSINESSRULES.RULETYPE=RULETYPES.RULETYPE\n" +
+                        "and TARGETDATABASE.DB_ID=BUSINESSRULES.DB_ID\n" +
+                        "and TEMPLATES.RULETYPE=RULETYPES.RULETYPE\n" +
+                        "and TIMING.TIMING=MASTERTEMPLATE.TIMING\n" +
+                        "and TRIGGEREVENT.TRIGGEREVENT=MASTERTEMPLATE.TRIGGEREVENT\n" +
+                        "and BUSINESSRULES.MASTER_ID=MASTERTEMPLATE.MASTER_ID\n" +
+                        "and TARGETCOLUMN.ID=BUSINESSRULES.ID\n" +
+                        "and SQL.ID = BUSINESSRULES.SQL_ID\n" +
+                        "and BUSINESSRULES.ID = ?";
+            }
+
+            pr = connection.prepareStatement(sql);
             pr.setInt(1, id);
-            ResultSet rs = pr.executeQuery();
-            return rs;
+            ResultSet rs2 = pr.executeQuery();
+            return rs2;
             }
          catch(Exception e) {
-
+            e.printStackTrace();
         }
         try {
             connection.close();

@@ -88,11 +88,27 @@ public class BusinessRuleService {
                 endcode = rs.getString("END_CODE");
                 triggerevent = rs.getString("TRIGGEREVENT");
 
-
-                values.add(new Value(rs.getInt("V_POSITION"), rs.getString("V_VALUE")));
-                columns.add(rs.getString("T_COLUMN"));
-                tables.add(new Table(rs.getString("T_TABLE"), null, rs.getInt("T_POSITION")));
-                operators.add(new Operator(rs.getString("OPERATOR")));
+                try {
+                    values.add(new Value(rs.getInt("V_POSITION"), rs.getString("V_VALUE")));
+                }catch(Exception e){
+                    values.add(new Value(1,""));
+                }
+                try {
+                    columns.add(rs.getString("T_COLUMN"));
+                }catch(Exception e){
+                    columns.add("");
+                }
+                try {
+                    tables.add(new Table(rs.getString("T_TABLE"), null, rs.getInt("T_POSITION")));
+                }catch(Exception e){
+                    if(tables.size() == 0)
+                        tables.add(new Table("", null, 1));
+                }
+                try {
+                    operators.add(new Operator(rs.getString("OPERATOR")));
+                }catch(Exception e){
+                    operators.add(new Operator(""));
+                }
 
                 dbname = rs.getString("DBNAME");
                 username = rs.getString("USERNAME");
